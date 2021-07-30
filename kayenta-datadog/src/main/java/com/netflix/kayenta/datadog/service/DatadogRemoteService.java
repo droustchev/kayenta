@@ -19,11 +19,13 @@ package com.netflix.kayenta.datadog.service;
 import com.netflix.kayenta.model.DatadogMetricDescriptorsResponse;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.Headers;
 import retrofit.http.Query;
 
 public interface DatadogRemoteService {
 
   // See https://docs.datadoghq.com/api/?lang=python#query-time-series-points
+  @Headers("User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36")
   @GET("/api/v1/query")
   DatadogTimeSeries getTimeSeries(
       @Header("DD-API-KEY") String apiKey,
