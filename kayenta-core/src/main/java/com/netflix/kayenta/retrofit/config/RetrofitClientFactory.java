@@ -18,6 +18,7 @@ package com.netflix.kayenta.retrofit.config;
 
 import static retrofit.Endpoints.newFixedEndpoint;
 
+import com.netflix.kayenta.retrofit.HttpLoggingInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.spinnaker.kork.annotations.VisibleForTesting;
 import com.netflix.spinnaker.retrofit.Slf4jRetrofitLogger;
@@ -115,6 +116,13 @@ public class RetrofitClientFactory {
 
     Slf4jRetrofitLogger logger = createRetrofitLogger.apply(type);
 
+    HttpLoggingInterceptor logging = new HttpLoggingInterceptor(logger);
+    logging.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+    // logging.redactHeader("DD-API-KEY");
+    // logging.redactHeader("DD-APPLICATION-KEY");
+    // OkHttpClient httpClient = new OkHttpClient();
+    okHttpClient.interceptors().add(logging);
+
     return new RestAdapter.Builder()
         .setEndpoint(endpoint)
         .setClient(new OkClient(okHttpClient))
@@ -141,11 +149,7 @@ public class RetrofitClientFactory {
       credential = Credentials.basic(username, password);
     }
 
-    HttploggingInterceptor logging = new HttpLoggingInterceptor();
-    logging.setLevel(Level.BODY);
-    logging.redactHeader("DD-API-KEY");
-    logging.redactHeader("DD-APPLICATION-KEY");
-    OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
+    OkHttpClient httpClient = new OkHttpClient();
 
     httpClient.setAuthenticator(
         new Authenticator() {
