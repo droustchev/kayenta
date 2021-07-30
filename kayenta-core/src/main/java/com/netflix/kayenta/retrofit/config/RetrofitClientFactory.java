@@ -141,7 +141,11 @@ public class RetrofitClientFactory {
       credential = Credentials.basic(username, password);
     }
 
-    OkHttpClient httpClient = new OkHttpClient();
+    HttploggingInterceptor logging = new HttpLoggingInterceptor();
+    logging.setLevel(Level.BODY);
+    logging.redactHeader("DD-API-KEY");
+    logging.redactHeader("DD-APPLICATION-KEY");
+    OkHttpClient httpClient = new OkHttpClient.Builder().addInterceptor(logging).build();
 
     httpClient.setAuthenticator(
         new Authenticator() {
